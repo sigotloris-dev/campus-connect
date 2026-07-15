@@ -7,6 +7,7 @@ import {
   useEffect,
   useState,
 } from "react";
+import { usePathname } from "next/navigation";
 import {
   ArrowUpFromLine,
   CheckCircle2,
@@ -56,7 +57,11 @@ function detectPlatform(): Platform {
 
 const DISMISS_KEY = "cc-install-dismissed";
 
+// Aree dell'app riservate agli utenti loggati (qui può comparire il banner)
+const APP_AREAS = ["/swipe", "/matches", "/profile"];
+
 export function InstallProvider({ children }: { children: React.ReactNode }) {
+  const pathname = usePathname();
   const [ready, setReady] = useState(false);
   const [deferred, setDeferred] = useState<InstallEvent | null>(null);
   const [platform, setPlatform] = useState<Platform>("desktop");
@@ -122,7 +127,12 @@ export function InstallProvider({ children }: { children: React.ReactNode }) {
     openGuide,
   };
 
-  const showBanner = ready && !isStandalone && !bannerDismissed && !guideOpen;
+  // Solo nell'area loggata (non su login/registrazione)
+  const onAppArea = APP_AREAS.some(
+    (p) => pathname === p || pathname.startsWith(p + "/"),
+  );
+  const showBanner =
+    ready && onAppArea && !isStandalone && !bannerDismissed && !guideOpen;
 
   return (
     <InstallContext.Provider value={ctx}>
