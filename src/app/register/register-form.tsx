@@ -13,6 +13,7 @@ import {
   COUNTRIES,
   ENGLISH_LEVELS,
   ENGLISH_LEVEL_LABEL,
+  MAX_PHOTOS,
   flagEmoji,
 } from "@/lib/constants";
 
@@ -30,7 +31,7 @@ async function compressImage(file: File): Promise<File> {
     const bitmap = await createImageBitmap(file, {
       imageOrientation: "from-image",
     });
-    const maxDim = 1280;
+    const maxDim = 1080;
     const scale = Math.min(1, maxDim / Math.max(bitmap.width, bitmap.height));
     const width = Math.round(bitmap.width * scale);
     const height = Math.round(bitmap.height * scale);
@@ -43,7 +44,7 @@ async function compressImage(file: File): Promise<File> {
     ctx.drawImage(bitmap, 0, 0, width, height);
 
     const blob = await new Promise<Blob | null>((resolve) =>
-      canvas.toBlob((b) => resolve(b), "image/jpeg", 0.82),
+      canvas.toBlob((b) => resolve(b), "image/jpeg", 0.75),
     );
     if (!blob) return file;
 
@@ -166,7 +167,9 @@ export function RegisterForm({ dorms }: { dorms: Dorm[] }) {
   }
 
   function onFiles(e: React.ChangeEvent<HTMLInputElement>) {
-    const list = e.target.files ? Array.from(e.target.files).slice(0, 4) : [];
+    const list = e.target.files
+      ? Array.from(e.target.files).slice(0, MAX_PHOTOS)
+      : [];
     setPhotos(list);
   }
 
@@ -414,7 +417,7 @@ export function RegisterForm({ dorms }: { dorms: Dorm[] }) {
       <section className={step === 3 ? "flex flex-col gap-4" : "hidden"}>
         <div>
           <label className="mb-2 block text-sm font-medium">
-            Your photos (1-4)
+            Your photos (1-{MAX_PHOTOS})
           </label>
           <input
             ref={fileRef}

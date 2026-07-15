@@ -6,6 +6,7 @@ import { prisma } from "@/lib/prisma";
 import { createSession, deleteSession } from "@/lib/session";
 import { RegisterSchema, LoginSchema, type FormState } from "@/lib/validation";
 import { isValidPhoto, savePhoto } from "@/lib/uploads";
+import { MAX_PHOTOS } from "@/lib/constants";
 
 // Normalizza il codice studente per garantire unicità coerente
 function normalizeCode(code: string): string {
@@ -56,8 +57,8 @@ export async function register(
     .filter((f): f is File => f instanceof File && f.size > 0);
   if (files.length === 0) {
     fieldErrors.photos = ["Upload at least one photo"];
-  } else if (files.length > 4) {
-    fieldErrors.photos = ["4 photos max"];
+  } else if (files.length > MAX_PHOTOS) {
+    fieldErrors.photos = [`${MAX_PHOTOS} photos max`];
   } else {
     for (const f of files) {
       const err = isValidPhoto(f);

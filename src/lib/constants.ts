@@ -20,6 +20,9 @@ export const ENGLISH_LEVEL_LABEL: Record<EnglishLevel, string> = {
   NATIVE: "Native speaker",
 };
 
+// Numero massimo di foto per profilo (limite di spazio)
+export const MAX_PHOTOS = 3;
+
 // Campus dorms (configurable — seeded into the DB)
 export const DORMS = [
   "Butler Hall",
