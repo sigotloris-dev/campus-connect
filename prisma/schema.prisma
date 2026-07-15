@@ -1,0 +1,106 @@
+// EF App — schema dati
+// Docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client"
+  output   = "../src/generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+// Studente del campus
+model User {
+  id            String   @id @default(cuid())
+  studentCode   String   @unique // identificativo univoco (non verificato: deterrente anti-fake)
+  firstName     String
+  lastName      String
+  email         String   @unique
+  pinHash       String   // PIN 4-6 cifre, cifrato con bcrypt
+  birthDate     DateTime // usato per calcolare l'età mostrata
+  nationality   String   // codice paese ISO (es. "IT", "BR")
+  englishLevel  String   // A1 | A2 | B1 | B2 | C1 | C2 | NATIVE
+  departureDate DateTime // fine permanenza nel campus
+  dormId        String?
+  dorm          Dorm?    @relation(fields: [dormId], references: [id])
+  bio           String?
+  createdAt     DateTime @default(now())
+
+  photos         Photo[]
+  swipesSent     Swipe[]   @relation("SwipesSent")
+  swipesReceived Swipe[]   @relation("SwipesReceived")
+  matchesAsA     Match[]   @relation("MatchUserA")
+  matchesAsB     Match[]   @relation("MatchUserB")
+  messages       Message[]
+  meetups        Meetup[]  @relation("MeetupProposer")
+}
+
+// Dormitorio del campus (lista configurabile)
+model Dorm {
+  id    String @id @default(cuid())
+  name  String @unique
+  users User[]
+}
+
+// Foto profilo (una o più)
+model Photo {
+  id     String @id @default(cuid())
+  userId String
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+  url    String // percorso file o data URL
+  order  Int    @default(0)
+}
+
+// Scorrimento: from ha valutato to (like/pass)
+model Swipe {
+  id         String   @id @default(cuid())
+  fromUserId String
+  toUserId   String
+  from       User     @relation("SwipesSent", fields: [fromUserId], references: [id], onDelete: Cascade)
+  to         User     @relation("SwipesReceived", fields: [toUserId], references: [id], onDelete: Cascade)
+  liked      Boolean
+  createdAt  DateTime @default(now())
+
+  @@unique([fromUserId, toUserId])
+}
+
+// Match reciproco tra due utenti; variant assegna il flusso A/B
+model Match {
+  id        String   @id @default(cuid())
+  userAId   String // per convenzione l'id "minore", per garantire l'unicità della coppia
+  userBId   String
+  userA     User     @relation("MatchUserA", fields: [userAId], references: [id], onDelete: Cascade)
+  userB     User     @relation("MatchUserB", fields: [userBId], references: [id], onDelete: Cascade)
+  variant   String // "MEETUP" (incontro al buio) | "CHAT"
+  createdAt DateTime @default(now())
+
+  messages Message[]
+  meetups  Meetup[]
+
+  @@unique([userAId, userBId])
+}
+
+// Messaggio chat (variante CHAT)
+model Message {
+  id        String   @id @default(cuid())
+  matchId   String
+  match     Match    @relation(fields: [matchId], references: [id], onDelete: Cascade)
+  senderId  String
+  sender    User     @relation(fields: [senderId], references: [id], onDelete: Cascade)
+  body      String
+  createdAt DateTime @default(now())
+}
+
+// Proposta di incontro (variante MEETUP)
+model Meetup {
+  id         String   @id @default(cuid())
+  matchId    String
+  match      Match    @relation(fields: [matchId], references: [id], onDelete: Cascade)
+  proposerId String
+  proposer   User     @relation("MeetupProposer", fields: [proposerId], references: [id], onDelete: Cascade)
+  place      String
+  time       DateTime
+  status     String   @default("PROPOSED") // PROPOSED | CONFIRMED | DECLINED
+  createdAt  DateTime @default(now())
+}

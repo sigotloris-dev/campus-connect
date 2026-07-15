@@ -1,36 +1,75 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Campus Connect (EF App)
 
-## Getting Started
+PWA per connettere gli studenti di un campus a immersione linguistica, aiutandoli
+a conoscere persone **fuori dalla propria cerchia**. Meccanica in stile "swipe":
+scorri i profili, e quando c'è un match si apre uno di due flussi (test A/B).
 
-First, run the development server:
+## Funzionalità
+
+- **Registrazione** multi-step: codice studente (identificativo univoco, non
+  verificato — deterrente anti-fake), nome/cognome, email, PIN (4-6 cifre),
+  data di nascita, nazionalità, livello d'inglese, dormitorio, fine permanenza, foto.
+- **Login**: codice studente + PIN. Sessione via cookie firmato (JWT).
+- **Scopri**: deck di profili con foto, età, nazionalità (bandiera), livello
+  d'inglese, tempo rimasto nel campus, dormitorio, bio.
+- **Match**: al like reciproco scatta il match, con **assegnazione casuale 50/50**
+  di una delle due varianti:
+  - **Incontro al buio** (`MEETUP`): niente chat, si propone luogo + orario nel campus.
+  - **Chat** (`CHAT`): messaggistica in-app.
+- **Profilo**: anteprima del proprio profilo + dati account + logout.
+
+## Stack
+
+- Next.js 16 (App Router) · React 19 · Tailwind CSS v4
+- Prisma 7 + SQLite (driver adapter `better-sqlite3`) — in sviluppo
+- Auth custom: `jose` (JWT) + `bcryptjs` (PIN), validazione con `zod`
+
+## Avvio
 
 ```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+npm install
+npm run db:reset   # crea/azzera il DB, applica le migrazioni e semina i dormitori
+npm run dev        # http://localhost:3000
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+### Dati demo (opzionale)
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+```bash
+npx tsx prisma/demo.ts
+```
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+Crea 6 utenti fittizi + un account di test **codice `TEST-ME`, PIN `1234`**.
+Gli utenti demo mettono like all'account di test, così basta ricambiare per fare match.
 
-## Learn More
+## Script
 
-To learn more about Next.js, take a look at the following resources:
+| Comando | Descrizione |
+| --- | --- |
+| `npm run dev` | Server di sviluppo |
+| `npm run db:seed` | Semina i dormitori |
+| `npm run db:reset` | Azzera il DB + migrazioni + seed |
+| `npx tsx prisma/demo.ts` | Popola utenti demo |
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+## Note per la produzione
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+- **Database**: SQLite va bene in sviluppo. Per il deploy (es. Vercel) migrare a
+  Postgres (Neon/Supabase) cambiando il driver adapter di Prisma.
+- **Foto**: in sviluppo salvate in `public/uploads`. In produzione usare uno
+  storage a oggetti (S3, Supabase Storage, ecc.).
+- **Chat**: attualmente in polling ogni 3s. Passare a realtime (Supabase Realtime
+  / WebSocket) per la produzione.
 
-## Deploy on Vercel
+## PWA
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+L'app è installabile su Home:
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+- `src/app/manifest.ts` → manifest servito su `/manifest.webmanifest`
+- icone in `public/` (`icon-192`, `icon-512`, `icon-maskable-512`, `apple-touch-icon`),
+  rigenerabili con `node scripts/gen-icons.mjs`
+- service worker `public/sw.js` (fallback offline + handler push predisposto)
+- `src/components/pwa.tsx` registra il SW e mostra il prompt d'installazione
+  (pulsante su Android/Chrome, istruzioni "Aggiungi a Home" su iOS Safari)
+
+> Le notifiche push sono predisposte nel service worker ma non ancora collegate
+> (mancano chiavi VAPID + salvataggio subscription). L'installazione richiede HTTPS
+> in produzione (in locale funziona su `localhost`).
