@@ -1,6 +1,7 @@
 import { LogOut } from "lucide-react";
 import { getCurrentUser } from "@/lib/dal";
 import { logout } from "@/app/actions/auth";
+import { InstallButton } from "@/components/install";
 import { calcAge, timeRemainingLabel } from "@/lib/format";
 import { ProfileCard } from "@/components/profile-card";
 import type { Candidate } from "@/lib/types";
@@ -37,6 +38,10 @@ export default async function ProfilePage() {
         <Row label="Full name" value={`${user.firstName} ${user.lastName}`} />
         <Row label="Student ID" value={user.studentCode} />
         <Row label="Email" value={user.email} />
+      </div>
+
+      <div className="mt-4">
+        <InstallButton />
       </div>
 
       <form action={logout} className="mt-6">
