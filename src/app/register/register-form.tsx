@@ -1,6 +1,13 @@
 "use client";
 
-import { useActionState, useEffect, useMemo, useRef, useState } from "react";
+import {
+  startTransition,
+  useActionState,
+  useEffect,
+  useMemo,
+  useRef,
+  useState,
+} from "react";
 import { register } from "@/app/actions/auth";
 import {
   COUNTRIES,
@@ -16,12 +23,45 @@ const inputClass =
 
 const STEPS = ["ID", "Account", "Profile", "Photos"];
 
+// Ridimensiona e comprime una foto nel browser, così l'invio resta leggero
+// (necessario: Vercel limita il corpo della richiesta a ~4,5 MB).
+async function compressImage(file: File): Promise<File> {
+  try {
+    const bitmap = await createImageBitmap(file, {
+      imageOrientation: "from-image",
+    });
+    const maxDim = 1280;
+    const scale = Math.min(1, maxDim / Math.max(bitmap.width, bitmap.height));
+    const width = Math.round(bitmap.width * scale);
+    const height = Math.round(bitmap.height * scale);
+
+    const canvas = document.createElement("canvas");
+    canvas.width = width;
+    canvas.height = height;
+    const ctx = canvas.getContext("2d");
+    if (!ctx) return file;
+    ctx.drawImage(bitmap, 0, 0, width, height);
+
+    const blob = await new Promise<Blob | null>((resolve) =>
+      canvas.toBlob((b) => resolve(b), "image/jpeg", 0.82),
+    );
+    if (!blob) return file;
+
+    const name = file.name.replace(/\.[^.]+$/, "") + ".jpg";
+    return new File([blob], name, { type: "image/jpeg" });
+  } catch {
+    return file; // in caso di errore, invia l'originale
+  }
+}
+
 export function RegisterForm({ dorms }: { dorms: Dorm[] }) {
   const [step, setStep] = useState(0);
   const [state, action, pending] = useActionState(register, undefined);
   const [localError, setLocalError] = useState<string | null>(null);
+  const [compressing, setCompressing] = useState(false);
   const [photos, setPhotos] = useState<File[]>([]);
   const fileRef = useRef<HTMLInputElement>(null);
+  const busy = pending || compressing;
 
   const [form, setForm] = useState({
     studentCode: "",
@@ -130,10 +170,45 @@ export function RegisterForm({ dorms }: { dorms: Dorm[] }) {
     setPhotos(list);
   }
 
+  // Invio finale: comprime le foto, poi manda tutto alla Server Action
+  async function handleSubmit(e: React.FormEvent) {
+    e.preventDefault();
+    if (step !== STEPS.length - 1) return; // evita invii accidentali (es. Invio)
+    if (photos.length === 0) {
+      setLocalError("Add at least one photo");
+      return;
+    }
+    setLocalError(null);
+
+    setCompressing(true);
+    let compressed: File[];
+    try {
+      compressed = await Promise.all(photos.map(compressImage));
+    } finally {
+      setCompressing(false);
+    }
+
+    const fd = new FormData();
+    fd.set("studentCode", form.studentCode);
+    fd.set("firstName", form.firstName);
+    fd.set("lastName", form.lastName);
+    fd.set("email", form.email);
+    fd.set("pin", form.pin);
+    fd.set("birthDate", form.birthDate);
+    fd.set("nationality", form.nationality);
+    fd.set("englishLevel", form.englishLevel);
+    fd.set("dormId", form.dormId);
+    fd.set("departureDate", form.departureDate);
+    fd.set("bio", form.bio);
+    for (const f of compressed) fd.append("photos", f, f.name);
+
+    startTransition(() => action(fd));
+  }
+
   const today = new Date().toISOString().slice(0, 10);
 
   return (
-    <form action={action} className="flex flex-col">
+    <form onSubmit={handleSubmit} className="flex flex-col">
       {/* Step indicator */}
       <div className="mb-6 flex items-center gap-1.5">
         {STEPS.map((label, i) => (
@@ -410,10 +485,14 @@ export function RegisterForm({ dorms }: { dorms: Dorm[] }) {
         ) : (
           <button
             type="submit"
-            disabled={pending || photos.length === 0}
+            disabled={busy || photos.length === 0}
             className="brand-gradient flex-1 rounded-xl py-3.5 font-semibold text-white shadow-md active:scale-[0.99] disabled:opacity-60"
           >
-            {pending ? "Creating…" : "Create profile"}
+            {compressing
+              ? "Optimizing photos…"
+              : pending
+                ? "Creating…"
+                : "Create profile"}
           </button>
         )}
       </div>
