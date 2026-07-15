@@ -89,10 +89,20 @@ export async function register(
     return { ok: false, fieldErrors: { email: ["This email is already registered"] } };
   }
 
-  // Salva le foto su disco
+  // Salva le foto (Vercel Blob in produzione). Se fallisce, mostra il motivo
+  // invece di far crashare la pagina.
   const photoUrls: string[] = [];
-  for (const f of files) {
-    photoUrls.push(await savePhoto(f));
+  try {
+    for (const f of files) {
+      photoUrls.push(await savePhoto(f));
+    }
+  } catch (e) {
+    const msg = e instanceof Error ? e.message : "errore sconosciuto";
+    console.error("[register] savePhoto failed:", msg);
+    return {
+      ok: false,
+      fieldErrors: { photos: [`Caricamento foto non riuscito: ${msg}`] },
+    };
   }
 
   const pinHash = await bcrypt.hash(data.pin, 10);
