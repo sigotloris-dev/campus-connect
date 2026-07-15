@@ -67,6 +67,7 @@ export const COUNTRIES: { code: string; name: string }[] = [
   { code: "JP", name: "Japan" },
   { code: "KR", name: "South Korea" },
   { code: "CN", name: "China" },
+  { code: "HK", name: "Hong Kong" },
   { code: "TW", name: "Taiwan" },
   { code: "TH", name: "Thailand" },
   { code: "VN", name: "Vietnam" },
