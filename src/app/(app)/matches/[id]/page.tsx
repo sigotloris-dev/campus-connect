@@ -40,19 +40,25 @@ export default async function MatchPage({
         <Link href="/matches" className="p-1 text-[var(--muted)]">
           <ChevronLeft size={24} />
         </Link>
-        <div className="h-9 w-9 overflow-hidden rounded-full bg-zinc-200">
-          {other.photos[0]?.url ? (
-            // eslint-disable-next-line @next/next/no-img-element
-            <img
-              src={other.photos[0].url}
-              alt={other.firstName}
-              className="h-full w-full object-cover"
-            />
-          ) : (
-            <div className="flex h-full w-full items-center justify-center">🎓</div>
-          )}
-        </div>
-        <span className="font-semibold">{other.firstName}</span>
+        <Link
+          href={`/matches/${id}/profile`}
+          className="flex min-w-0 items-center gap-2"
+          aria-label={`Vedi il profilo di ${other.firstName}`}
+        >
+          <div className="h-9 w-9 overflow-hidden rounded-full bg-zinc-200">
+            {other.photos[0]?.url ? (
+              // eslint-disable-next-line @next/next/no-img-element
+              <img
+                src={other.photos[0].url}
+                alt={other.firstName}
+                className="h-full w-full object-cover"
+              />
+            ) : (
+              <div className="flex h-full w-full items-center justify-center">🎓</div>
+            )}
+          </div>
+          <span className="truncate font-semibold">{other.firstName}</span>
+        </Link>
         <span className="ml-auto rounded-full bg-[var(--background)] px-2.5 py-1 text-xs font-medium text-[var(--muted)]">
           {match.variant === "MEETUP" ? "Meetup" : "Chat"}
         </span>
