@@ -4,6 +4,7 @@ import { useState, useTransition } from "react";
 import Link from "next/link";
 import { Zap, Clock, Handshake } from "lucide-react";
 import { ProfileCard } from "@/components/profile-card";
+import { Logo } from "@/components/logo";
 import { swipe, type SwipeResult } from "@/app/actions/swipe";
 import type { Candidate } from "@/lib/types";
 
@@ -42,7 +43,7 @@ export function Deck({ initial }: { initial: Candidate[] }) {
   if (!current) {
     return (
       <div className="flex flex-1 flex-col items-center justify-center gap-3 px-8 text-center">
-        <div className="text-5xl">🌱</div>
+        <Logo mono className="h-20 w-20" />
         <h2 className="text-lg font-bold">That&apos;s everyone for now</h2>
         <p className="text-sm text-[var(--muted)]">
           You&apos;ve reached out to everyone available. Check back later — the

@@ -55,7 +55,7 @@ export default async function ProfilePage() {
       <form action={logout} className="mt-6">
         <button
           type="submit"
-          className="flex w-full items-center justify-center gap-2 rounded-xl border border-[var(--border)] bg-white py-3.5 font-semibold text-[var(--primary-600)]"
+          className="flex w-full items-center justify-center gap-2 rounded-xl border border-[var(--border)] bg-white py-3.5 font-semibold text-[var(--foreground)]"
         >
           <LogOut size={18} /> Log out
         </button>

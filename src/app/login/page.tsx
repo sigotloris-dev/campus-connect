@@ -2,6 +2,7 @@ import Link from "next/link";
 import { redirect } from "next/navigation";
 import { verifySession } from "@/lib/dal";
 import { LoginForm } from "./login-form";
+import { Logo } from "@/components/logo";
 
 export default async function LoginPage() {
   if (await verifySession()) redirect("/swipe");
@@ -9,8 +10,8 @@ export default async function LoginPage() {
   return (
     <div className="app-shell justify-center px-6 py-10">
       <div className="mb-10 text-center">
-        <div className="brand-gradient mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-2xl text-3xl shadow-lg">
-          🎓
+        <div className="mx-auto mb-4 h-16 w-16 overflow-hidden rounded-2xl shadow-lg">
+          <Logo className="h-full w-full" />
         </div>
         <h1 className="text-3xl font-extrabold tracking-tight">
           <span className="text-gradient">Campus Connect</span>

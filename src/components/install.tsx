@@ -16,6 +16,7 @@ import {
   SquarePlus,
   X,
 } from "lucide-react";
+import { Logo } from "@/components/logo";
 
 type Platform = "ios-safari" | "ios-other" | "android" | "desktop";
 
@@ -141,8 +142,8 @@ export function InstallProvider({ children }: { children: React.ReactNode }) {
       {showBanner && (
         <div className="pointer-events-none fixed inset-x-0 bottom-20 z-50 flex justify-center px-4">
           <div className="pointer-events-auto flex w-full max-w-[28rem] items-center gap-3 rounded-2xl border border-[var(--border)] bg-white p-3 shadow-xl">
-            <div className="brand-gradient flex h-10 w-10 shrink-0 items-center justify-center rounded-xl text-lg">
-              🎓
+            <div className="h-10 w-10 shrink-0 overflow-hidden rounded-xl">
+              <Logo className="h-full w-full" />
             </div>
             <div className="min-w-0 flex-1">
               <p className="text-sm font-semibold">Install Campus Connect</p>
