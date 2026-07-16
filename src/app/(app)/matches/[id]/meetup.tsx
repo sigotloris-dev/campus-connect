@@ -6,6 +6,7 @@ import { MapPin, Clock, Check, X } from "lucide-react";
 import { CAMPUS_PLACES } from "@/lib/constants";
 import { formatDateTime } from "@/lib/format";
 import { proposeMeetup, respondMeetup } from "@/app/actions/meetup";
+import { MeetVerify } from "@/components/meet-verify";
 
 type Latest = {
   id: string;
@@ -23,11 +24,13 @@ export function Meetup({
   meId,
   otherName,
   latest,
+  met,
 }: {
   matchId: string;
   meId: string;
   otherName: string;
   latest: Latest;
+  met: boolean;
 }) {
   const router = useRouter();
   const [pending, startTransition] = useTransition();
@@ -58,27 +61,31 @@ export function Meetup({
     });
   }
 
-  // Confirmed meetup
+  // Confirmed meetup → riepilogo + verifica dell'incontro
   if (latest?.status === "CONFIRMED") {
     return (
-      <div className="flex flex-1 flex-col items-center justify-center gap-4 px-8 text-center">
-        <div className="flex h-16 w-16 items-center justify-center rounded-full bg-[var(--success)]/15 text-[var(--success)]">
-          <Check size={32} />
-        </div>
-        <h2 className="text-xl font-bold">Meetup confirmed!</h2>
-        <div className="w-full max-w-xs rounded-2xl bg-white p-4 text-left shadow-sm">
-          <p className="flex items-center gap-2 font-medium">
-            <MapPin size={18} className="text-[var(--accent)]" />
-            {latest.place}
+      <div className="no-scrollbar flex flex-1 flex-col gap-5 overflow-y-auto px-6 py-6">
+        <div className="flex flex-col items-center gap-3 text-center">
+          <div className="flex h-16 w-16 items-center justify-center rounded-full bg-[var(--success)]/15 text-[var(--success)]">
+            <Check size={32} />
+          </div>
+          <h2 className="text-xl font-bold">Meetup confirmed!</h2>
+          <div className="w-full max-w-xs rounded-2xl bg-white p-4 text-left shadow-sm">
+            <p className="flex items-center gap-2 font-medium">
+              <MapPin size={18} className="text-[var(--accent)]" />
+              {latest.place}
+            </p>
+            <p className="mt-2 flex items-center gap-2 text-[var(--muted)]">
+              <Clock size={18} />
+              {formatDateTime(latest.time)}
+            </p>
+          </div>
+          <p className="text-sm text-[var(--muted)]">
+            See you there with {otherName}. Have fun! 🎉
           </p>
-          <p className="mt-2 flex items-center gap-2 text-[var(--muted)]">
-            <Clock size={18} />
-            {formatDateTime(latest.time)}
-          </p>
         </div>
-        <p className="text-sm text-[var(--muted)]">
-          See you there with {otherName}. Have fun! 🎉
-        </p>
+
+        <MeetVerify matchId={matchId} initialMet={met} />
       </div>
     );
   }

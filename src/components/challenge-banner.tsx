@@ -42,10 +42,12 @@ export function ChallengeBanner({
   matchId,
   challengeAt,
   meetupStatus,
+  met,
 }: {
   matchId: string;
   challengeAt: string;
   meetupStatus: string | null;
+  met: boolean;
 }) {
   const [now, setNow] = useState<number | null>(null);
 
@@ -54,6 +56,15 @@ export function ChallengeBanner({
     const t = setInterval(() => setNow(Date.now()), 1000);
     return () => clearInterval(t);
   }, []);
+
+  // Incontro verificato
+  if (met) {
+    return (
+      <div className="flex items-center gap-2 border-b border-[var(--border)] bg-[var(--success)]/10 px-4 py-2.5 text-sm font-semibold text-[var(--success)]">
+        <CheckCircle2 size={18} /> You met! Meeting verified ✅
+      </div>
+    );
+  }
 
   if (now === null) return null; // evita mismatch SSR/idratazione
 

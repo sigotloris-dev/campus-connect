@@ -69,6 +69,7 @@ export default async function MatchPage({
         matchId={id}
         challengeAt={match.challengeAt.toISOString()}
         meetupStatus={match.meetups[0]?.status ?? null}
+        met={!!match.metAt}
       />
 
       <Chat matchId={id} meId={meId} initial={await getMessages(id)} />

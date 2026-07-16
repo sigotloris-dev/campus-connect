@@ -42,6 +42,7 @@ export default async function ChallengePage({
         matchId={id}
         meId={meId}
         otherName={other.firstName}
+        met={!!match.metAt}
         latest={
           match.meetups[0]
             ? {

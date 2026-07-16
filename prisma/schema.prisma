@@ -76,6 +76,12 @@ model Match {
   challengeAt DateTime @default(now()) // quando la sfida diventa disponibile
   createdAt   DateTime @default(now())
 
+  // Verifica dell'incontro tramite QR effimero (60s)
+  metAt         DateTime? // quando l'incontro è stato verificato
+  verifyCode    String? // codice QR attivo
+  verifyCodeBy  String? // userId che ha attivato il codice
+  verifyCodeExp DateTime? // scadenza del codice
+
   messages Message[]
   meetups  Meetup[]
 

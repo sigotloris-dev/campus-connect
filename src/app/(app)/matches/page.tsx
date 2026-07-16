@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { MessageCircle, MapPin, Zap } from "lucide-react";
+import { MessageCircle, MapPin, Zap, CheckCircle2 } from "lucide-react";
 import { verifySession } from "@/lib/dal";
 import { prisma } from "@/lib/prisma";
 
@@ -36,18 +36,22 @@ export default async function MatchesPage() {
   const rows = matches.map((m) => {
     const other = m.userAId === meId ? m.userB : m.userA;
     const mu = m.meetups[0];
+    const isMet = !!m.metAt;
     const confirmed = mu?.status === "CONFIRMED";
     const challengeReady = m.challengeAt.getTime() <= now;
 
     let subtitle: string;
-    if (confirmed) subtitle = `Meetup set · ${mu!.place}`;
+    if (isMet) subtitle = "You met ✅";
+    else if (confirmed) subtitle = `Meetup set · ${mu!.place}`;
     else subtitle = m.messages[0]?.body ?? "New match · say hi";
 
-    const state: "confirmed" | "ready" | "chat" = confirmed
-      ? "confirmed"
-      : challengeReady
-        ? "ready"
-        : "chat";
+    const state: "met" | "confirmed" | "ready" | "chat" = isMet
+      ? "met"
+      : confirmed
+        ? "confirmed"
+        : challengeReady
+          ? "ready"
+          : "chat";
 
     return {
       id: m.id,
@@ -100,8 +104,10 @@ export default async function MatchesPage() {
                 <div className="min-w-0 flex-1">
                   <div className="flex items-center gap-1.5">
                     <span className="font-semibold">{r.name}</span>
-                    {r.state === "confirmed" ? (
-                      <MapPin size={14} className="text-[var(--success)]" />
+                    {r.state === "met" ? (
+                      <CheckCircle2 size={14} className="text-[var(--success)]" />
+                    ) : r.state === "confirmed" ? (
+                      <MapPin size={14} className="text-[var(--accent)]" />
                     ) : r.state === "ready" ? (
                       <Zap size={14} className="text-[var(--accent)]" fill="currentColor" />
                     ) : (
