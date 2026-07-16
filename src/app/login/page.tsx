@@ -14,7 +14,7 @@ export default async function LoginPage() {
           <Logo className="h-full w-full" />
         </div>
         <h1 className="text-3xl font-extrabold tracking-tight">
-          <span className="text-gradient">Campus Connect</span>
+          <span className="text-gradient">StudyBuddy</span>
         </h1>
         <p className="mt-2 text-[var(--muted)]">
           Meet new people on your campus

@@ -14,11 +14,11 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "Campus Connect",
+  title: "StudyBuddy",
   description:
     "Meet new people on your campus, beyond your usual circle.",
-  applicationName: "Campus Connect",
-  appleWebApp: { capable: true, statusBarStyle: "default", title: "Campus Connect" },
+  applicationName: "StudyBuddy",
+  appleWebApp: { capable: true, statusBarStyle: "default", title: "StudyBuddy" },
   icons: {
     icon: "/icon-192.png",
     apple: "/apple-touch-icon.png",

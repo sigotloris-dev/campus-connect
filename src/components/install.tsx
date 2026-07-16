@@ -146,7 +146,7 @@ export function InstallProvider({ children }: { children: React.ReactNode }) {
               <Logo className="h-full w-full" />
             </div>
             <div className="min-w-0 flex-1">
-              <p className="text-sm font-semibold">Install Campus Connect</p>
+              <p className="text-sm font-semibold">Install StudyBuddy</p>
               <p className="truncate text-xs text-[var(--muted)]">
                 Add it to your Home Screen.
               </p>
@@ -260,7 +260,7 @@ function ModalBody({
     return (
       <div>
         <p className="mb-4 text-sm text-[var(--muted)]">
-          Add Campus Connect to your device for quick, full-screen access — no
+          Add StudyBuddy to your device for quick, full-screen access — no
           app store needed.
         </p>
         <button
@@ -340,7 +340,7 @@ function ModalBody({
         side).
       </Step>
       <Step n={2} icon={<SquarePlus size={18} />}>
-        Or open the browser menu and choose <b>Install Campus Connect</b>.
+        Or open the browser menu and choose <b>Install StudyBuddy</b>.
       </Step>
       <Step n={3} icon={<CheckCircle2 size={18} />}>
         Confirm to add it to your apps.

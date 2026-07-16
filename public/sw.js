@@ -1,5 +1,5 @@
-/* Service worker — Campus Connect */
-const CACHE = "campus-connect-v2";
+/* Service worker — StudyBuddy */
+const CACHE = "studybuddy-v1";
 const OFFLINE_URL = "/offline.html";
 
 self.addEventListener("install", (event) => {
@@ -62,7 +62,7 @@ self.addEventListener("push", (event) => {
   } catch {
     /* payload non JSON */
   }
-  const title = data.title || "Campus Connect";
+  const title = data.title || "StudyBuddy";
   const options = {
     body: data.body || "",
     icon: "/icon-192.png",

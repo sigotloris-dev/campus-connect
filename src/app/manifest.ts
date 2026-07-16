@@ -2,8 +2,8 @@ import type { MetadataRoute } from "next";
 
 export default function manifest(): MetadataRoute.Manifest {
   return {
-    name: "Campus Connect",
-    short_name: "Campus",
+    name: "StudyBuddy",
+    short_name: "StudyBuddy",
     description:
       "Meet new people on your campus, beyond your usual circle.",
     start_url: "/",
