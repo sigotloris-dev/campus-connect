@@ -1,4 +1,5 @@
-import { LogOut } from "lucide-react";
+import Link from "next/link";
+import { LogOut, Pencil } from "lucide-react";
 import { getCurrentUser } from "@/lib/dal";
 import { logout } from "@/app/actions/auth";
 import { InstallButton } from "@/components/install";
@@ -33,6 +34,13 @@ export default async function ProfilePage() {
       <div className="mb-4 aspect-[3/4] w-full">
         <ProfileCard c={preview} />
       </div>
+
+      <Link
+        href="/profile/edit"
+        className="mb-4 flex w-full items-center justify-center gap-2 rounded-xl border border-[var(--border)] bg-white py-3.5 font-semibold active:scale-[0.99]"
+      >
+        <Pencil size={18} /> Edit profile
+      </Link>
 
       <div className="rounded-2xl bg-white p-4 shadow-sm">
         <Row label="Full name" value={`${user.firstName} ${user.lastName}`} />

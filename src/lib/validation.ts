@@ -19,6 +19,14 @@ export const RegisterSchema = z.object({
   bio: z.string().trim().max(300, "300 characters max").optional(),
 });
 
+export const EditProfileSchema = z.object({
+  birthDate: z.string().min(1, "Enter your date of birth"),
+  nationality: z.string().length(2, "Select your nationality"),
+  englishLevel: z.enum(ENGLISH_LEVELS, { message: "Select your English level" }),
+  dormId: z.string().min(1, "Select your dorm"),
+  bio: z.string().trim().max(300, "300 characters max").optional(),
+});
+
 export const LoginSchema = z.object({
   studentCode: z.string().trim().min(1, "Enter your student ID"),
   pin: z.string().regex(/^\d{4,6}$/, "Invalid PIN"),
