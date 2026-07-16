@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { MessageCircle, MapPin, Zap, CheckCircle2 } from "lucide-react";
+import { MessageCircle } from "lucide-react";
 import { verifySession } from "@/lib/dal";
 import { prisma } from "@/lib/prisma";
 
@@ -23,42 +23,17 @@ export default async function MatchesPage() {
         take: 1,
         select: { body: true },
       },
-      meetups: {
-        orderBy: { createdAt: "desc" },
-        take: 1,
-        select: { status: true, place: true },
-      },
     },
     orderBy: { createdAt: "desc" },
   });
 
-  const now = Date.now();
   const rows = matches.map((m) => {
     const other = m.userAId === meId ? m.userB : m.userA;
-    const mu = m.meetups[0];
-    const isMet = !!m.metAt;
-    const confirmed = mu?.status === "CONFIRMED";
-    const challengeReady = m.challengeAt.getTime() <= now;
-
-    let subtitle: string;
-    if (isMet) subtitle = "You met ✅";
-    else if (confirmed) subtitle = `Meetup set · ${mu!.place}`;
-    else subtitle = m.messages[0]?.body ?? "New match · say hi";
-
-    const state: "met" | "confirmed" | "ready" | "chat" = isMet
-      ? "met"
-      : confirmed
-        ? "confirmed"
-        : challengeReady
-          ? "ready"
-          : "chat";
-
     return {
       id: m.id,
       name: other.firstName,
       photo: other.photos[0]?.url ?? null,
-      state,
-      subtitle,
+      subtitle: m.messages[0]?.body ?? "New match · say hi",
     };
   });
 
@@ -104,15 +79,7 @@ export default async function MatchesPage() {
                 <div className="min-w-0 flex-1">
                   <div className="flex items-center gap-1.5">
                     <span className="font-semibold">{r.name}</span>
-                    {r.state === "met" ? (
-                      <CheckCircle2 size={14} className="text-[var(--success)]" />
-                    ) : r.state === "confirmed" ? (
-                      <MapPin size={14} className="text-[var(--accent)]" />
-                    ) : r.state === "ready" ? (
-                      <Zap size={14} className="text-[var(--accent)]" fill="currentColor" />
-                    ) : (
-                      <MessageCircle size={14} className="text-[var(--primary)]" />
-                    )}
+                    <MessageCircle size={14} className="text-[var(--primary)]" />
                   </div>
                   <p className="truncate text-sm text-[var(--muted)]">
                     {r.subtitle}

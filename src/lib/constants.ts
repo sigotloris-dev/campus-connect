@@ -23,19 +23,6 @@ export const ENGLISH_LEVEL_LABEL: Record<EnglishLevel, string> = {
 // Numero massimo di foto per profilo (limite di spazio)
 export const MAX_PHOTOS = 3;
 
-// --- Meccanica "sfida a orologeria" ---
-// Durata casuale del timer che, allo scadere, sblocca la sfida dell'appuntamento
-export const CHALLENGE_MIN_MS = 20 * 60 * 1000; // 20 minuti
-export const CHALLENGE_MAX_MS = 7 * 60 * 60 * 1000; // 7 ore
-
-// Finestre orarie (ora locale) in cui il countdown del timer è visibile.
-// Ogni coppia è [oraInizio, oraFine) su 24h. Fuori da queste il timer è nascosto.
-export const TIMER_REVEAL_WINDOWS: [number, number][] = [
-  [8, 9],
-  [13, 14],
-  [20, 21],
-];
-
 // Campus dorms (configurable — seeded into the DB)
 export const DORMS = [
   "Butler Hall",
@@ -45,18 +32,6 @@ export const DORMS = [
   "Lugari Hall",
   "Ursula Hall",
   "St. John's Hall",
-] as const;
-
-// Campus spots for the meetup challenge
-export const CAMPUS_PLACES = [
-  "Main cafeteria",
-  "Library — entrance",
-  "Main lawn",
-  "Gym",
-  "Study room",
-  "Campus bar",
-  "Reception",
-  "Sports field",
 ] as const;
 
 // Common nationalities on an immersion campus (ISO 3166-1 alpha-2 code + English name)

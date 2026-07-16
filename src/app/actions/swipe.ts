@@ -2,7 +2,6 @@
 
 import { verifySession } from "@/lib/dal";
 import { prisma } from "@/lib/prisma";
-import { CHALLENGE_MIN_MS, CHALLENGE_MAX_MS } from "@/lib/constants";
 
 export type SwipeResult = {
   matched: boolean;
@@ -42,12 +41,8 @@ export async function swipe(
     select: { id: true },
   });
   if (!match) {
-    // Timer casuale: la sfida si sblocca tra 20 min e 7 h dal match
-    const delay =
-      CHALLENGE_MIN_MS + Math.random() * (CHALLENGE_MAX_MS - CHALLENGE_MIN_MS);
-    const challengeAt = new Date(Date.now() + delay);
     match = await prisma.match.create({
-      data: { userAId, userBId, challengeAt },
+      data: { userAId, userBId },
       select: { id: true },
     });
   }

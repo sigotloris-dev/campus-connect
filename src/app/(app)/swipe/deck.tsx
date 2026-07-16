@@ -110,8 +110,7 @@ function MatchOverlay({
         other.
       </p>
       <p className="max-w-xs text-sm text-white/70">
-        Start chatting now — and keep an eye out: a surprise challenge will unlock
-        later. ⏳
+        You&apos;ve unlocked a chat — say hi and break the ice! 👋
       </p>
       <div className="mt-2 flex w-full max-w-xs flex-col gap-3">
         <Link

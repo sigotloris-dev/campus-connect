@@ -5,7 +5,6 @@ import { verifySession } from "@/lib/dal";
 import { prisma } from "@/lib/prisma";
 import { getMessages } from "@/app/actions/chat";
 import { Chat } from "./chat";
-import { ChallengeBanner } from "@/components/challenge-banner";
 
 const otherSelect = {
   id: true,
@@ -24,14 +23,11 @@ export default async function MatchPage({
 
   const match = await prisma.match.findUnique({
     where: { id },
-    include: {
+    select: {
+      userAId: true,
+      userBId: true,
       userA: { select: otherSelect },
       userB: { select: otherSelect },
-      meetups: {
-        orderBy: { createdAt: "desc" },
-        take: 1,
-        select: { status: true },
-      },
     },
   });
   if (!match || (match.userAId !== meId && match.userBId !== meId)) notFound();
@@ -64,13 +60,6 @@ export default async function MatchPage({
           <span className="truncate font-semibold">{other.firstName}</span>
         </Link>
       </header>
-
-      <ChallengeBanner
-        matchId={id}
-        challengeAt={match.challengeAt.toISOString()}
-        meetupStatus={match.meetups[0]?.status ?? null}
-        met={!!match.metAt}
-      />
 
       <Chat matchId={id} meId={meId} initial={await getMessages(id)} />
     </div>
