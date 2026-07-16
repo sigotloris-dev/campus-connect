@@ -33,7 +33,7 @@ export default async function MatchesPage() {
       id: m.id,
       name: other.firstName,
       photo: other.photos[0]?.url ?? null,
-      subtitle: m.messages[0]?.body ?? "New match · say hi",
+      subtitle: m.messages[0]?.body ?? "New connection · say hi",
     };
   });
 
@@ -41,17 +41,17 @@ export default async function MatchesPage() {
     <div className="flex flex-1 flex-col">
       <header className="px-5 pt-5 pb-3">
         <h1 className="text-xl font-extrabold">
-          <span className="text-gradient">Your matches</span>
+          <span className="text-gradient">Your connections</span>
         </h1>
       </header>
 
       {rows.length === 0 ? (
         <div className="flex flex-1 flex-col items-center justify-center gap-3 px-8 text-center">
-          <div className="text-5xl">💫</div>
-          <h2 className="text-lg font-bold">No matches yet</h2>
+          <div className="text-5xl">🌍</div>
+          <h2 className="text-lg font-bold">No connections yet</h2>
           <p className="text-sm text-[var(--muted)]">
             Head to <span className="font-semibold">Discover</span> and start
-            meeting the campus.
+            meeting people on campus.
           </p>
         </div>
       ) : (

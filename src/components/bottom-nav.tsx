@@ -2,11 +2,11 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { Flame, MessageCircleHeart, User } from "lucide-react";
+import { Compass, Handshake, User } from "lucide-react";
 
 const items = [
-  { href: "/swipe", label: "Discover", Icon: Flame },
-  { href: "/matches", label: "Matches", Icon: MessageCircleHeart },
+  { href: "/swipe", label: "Discover", Icon: Compass },
+  { href: "/matches", label: "Connections", Icon: Handshake },
   { href: "/profile", label: "Profile", Icon: User },
 ];
 

@@ -2,7 +2,7 @@
 
 import { useState, useTransition } from "react";
 import Link from "next/link";
-import { Zap, Clock, PartyPopper } from "lucide-react";
+import { Zap, Clock, Handshake } from "lucide-react";
 import { ProfileCard } from "@/components/profile-card";
 import { swipe, type SwipeResult } from "@/app/actions/swipe";
 import type { Candidate } from "@/lib/types";
@@ -103,14 +103,14 @@ function MatchOverlay({
 }) {
   return (
     <div className="absolute inset-0 z-30 flex flex-col items-center justify-center gap-4 bg-black/70 px-8 text-center backdrop-blur-sm">
-      <PartyPopper size={56} className="text-white" />
-      <h2 className="text-3xl font-extrabold text-white">It&apos;s a match!</h2>
+      <Handshake size={56} className="text-white" />
+      <h2 className="text-3xl font-extrabold text-white">You&apos;re connected!</h2>
       <p className="text-white/90">
-        You and <span className="font-semibold">{result.name}</span> liked each
-        other.
+        You and <span className="font-semibold">{result.name}</span> are now
+        connected.
       </p>
       <p className="max-w-xs text-sm text-white/70">
-        You&apos;ve unlocked a chat — say hi and break the ice! 👋
+        Start a conversation and get to know each other. 👋
       </p>
       <div className="mt-2 flex w-full max-w-xs flex-col gap-3">
         <Link
