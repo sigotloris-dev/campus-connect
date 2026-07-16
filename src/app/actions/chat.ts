@@ -13,7 +13,7 @@ export type ChatMessage = {
 async function assertMember(matchId: string, userId: string) {
   const m = await prisma.match.findUnique({
     where: { id: matchId },
-    select: { userAId: true, userBId: true, variant: true },
+    select: { userAId: true, userBId: true },
   });
   if (!m || (m.userAId !== userId && m.userBId !== userId)) return null;
   return m;
@@ -30,7 +30,6 @@ export async function sendMessage(
 
   const m = await assertMember(matchId, s.userId);
   if (!m) throw new Error("Match not found");
-  if (m.variant !== "CHAT") throw new Error("Chat not available for this match");
 
   const msg = await prisma.message.create({
     data: { matchId, senderId: s.userId, body: text.slice(0, 1000) },

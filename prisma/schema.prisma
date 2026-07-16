@@ -65,15 +65,16 @@ model Swipe {
   @@unique([fromUserId, toUserId])
 }
 
-// Match reciproco tra due utenti; variant assegna il flusso A/B
+// Match reciproco tra due utenti. La chat è sempre attiva; challengeAt indica
+// quando si sblocca la sfida dell'appuntamento (match + timer casuale 20min-7h).
 model Match {
-  id        String   @id @default(cuid())
-  userAId   String // per convenzione l'id "minore", per garantire l'unicità della coppia
-  userBId   String
-  userA     User     @relation("MatchUserA", fields: [userAId], references: [id], onDelete: Cascade)
-  userB     User     @relation("MatchUserB", fields: [userBId], references: [id], onDelete: Cascade)
-  variant   String // "MEETUP" (incontro al buio) | "CHAT"
-  createdAt DateTime @default(now())
+  id          String   @id @default(cuid())
+  userAId     String // per convenzione l'id "minore", per garantire l'unicità della coppia
+  userBId     String
+  userA       User     @relation("MatchUserA", fields: [userAId], references: [id], onDelete: Cascade)
+  userB       User     @relation("MatchUserB", fields: [userBId], references: [id], onDelete: Cascade)
+  challengeAt DateTime @default(now()) // quando la sfida diventa disponibile
+  createdAt   DateTime @default(now())
 
   messages Message[]
   meetups  Meetup[]

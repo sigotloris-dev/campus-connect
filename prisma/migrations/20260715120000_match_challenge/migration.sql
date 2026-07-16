@@ -1,0 +1,5 @@
+-- DropColumn
+ALTER TABLE "Match" DROP COLUMN "variant";
+
+-- AddColumn
+ALTER TABLE "Match" ADD COLUMN "challengeAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP;

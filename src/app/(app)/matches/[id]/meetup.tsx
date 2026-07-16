@@ -136,10 +136,10 @@ export function Meetup({
         </p>
       )}
       <div className="text-center">
-        <div className="text-4xl">📍</div>
-        <h2 className="mt-2 text-lg font-bold">Blind date</h2>
+        <div className="text-4xl">⚡</div>
+        <h2 className="mt-2 text-lg font-bold">The challenge</h2>
         <p className="mt-1 text-sm text-[var(--muted)]">
-          No chat: pick where and when to meet on campus.
+          Time&apos;s up! Pick where and when to meet on campus.
         </p>
       </div>
 

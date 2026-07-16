@@ -101,26 +101,24 @@ function MatchOverlay({
   result: SwipeResult;
   onClose: () => void;
 }) {
-  const isMeetup = result.variant === "MEETUP";
   return (
     <div className="absolute inset-0 z-30 flex flex-col items-center justify-center gap-4 bg-black/70 px-8 text-center backdrop-blur-sm">
       <PartyPopper size={56} className="text-white" />
       <h2 className="text-3xl font-extrabold text-white">It&apos;s a match!</h2>
       <p className="text-white/90">
-        You and <span className="font-semibold">{result.name}</span> both want to
-        meet.
+        You and <span className="font-semibold">{result.name}</span> liked each
+        other.
       </p>
       <p className="max-w-xs text-sm text-white/70">
-        {isMeetup
-          ? "No chat: propose right away where and when to meet on campus."
-          : "You've unlocked a chat: break the ice!"}
+        Start chatting now — and keep an eye out: a surprise challenge will unlock
+        later. ⏳
       </p>
       <div className="mt-2 flex w-full max-w-xs flex-col gap-3">
         <Link
           href={`/matches/${result.matchId}`}
           className="brand-gradient w-full rounded-xl py-3.5 font-semibold text-white shadow-md"
         >
-          {isMeetup ? "Set up the meetup" : "Open chat"}
+          Open chat
         </Link>
         <button
           onClick={onClose}

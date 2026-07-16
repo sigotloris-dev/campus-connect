@@ -7,7 +7,7 @@ import { prisma } from "@/lib/prisma";
 async function assertMember(matchId: string, userId: string) {
   const m = await prisma.match.findUnique({
     where: { id: matchId },
-    select: { userAId: true, userBId: true, variant: true },
+    select: { userAId: true, userBId: true, challengeAt: true },
   });
   if (!m || (m.userAId !== userId && m.userBId !== userId)) return null;
   return m;
@@ -23,7 +23,9 @@ export async function proposeMeetup(
 
   const m = await assertMember(matchId, s.userId);
   if (!m) throw new Error("Match not found");
-  if (m.variant !== "MEETUP") throw new Error("Not available for this match");
+  if (m.challengeAt.getTime() > Date.now()) {
+    return { ok: false, error: "The challenge isn't unlocked yet" };
+  }
 
   if (!place.trim()) return { ok: false, error: "Choose a place" };
   const time = new Date(timeIso);

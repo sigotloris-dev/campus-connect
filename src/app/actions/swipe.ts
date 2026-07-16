@@ -2,12 +2,11 @@
 
 import { verifySession } from "@/lib/dal";
 import { prisma } from "@/lib/prisma";
-import type { MatchVariant } from "@/lib/types";
+import { CHALLENGE_MIN_MS, CHALLENGE_MAX_MS } from "@/lib/constants";
 
 export type SwipeResult = {
   matched: boolean;
   matchId?: string;
-  variant?: MatchVariant;
   name?: string;
 };
 
@@ -40,14 +39,16 @@ export async function swipe(
   const [userAId, userBId] = [me, toUserId].sort();
   let match = await prisma.match.findUnique({
     where: { userAId_userBId: { userAId, userBId } },
-    select: { id: true, variant: true },
+    select: { id: true },
   });
   if (!match) {
-    // Assegnazione casuale del flusso A/B (50/50)
-    const variant: MatchVariant = Math.random() < 0.5 ? "MEETUP" : "CHAT";
+    // Timer casuale: la sfida si sblocca tra 20 min e 7 h dal match
+    const delay =
+      CHALLENGE_MIN_MS + Math.random() * (CHALLENGE_MAX_MS - CHALLENGE_MIN_MS);
+    const challengeAt = new Date(Date.now() + delay);
     match = await prisma.match.create({
-      data: { userAId, userBId, variant },
-      select: { id: true, variant: true },
+      data: { userAId, userBId, challengeAt },
+      select: { id: true },
     });
   }
 
@@ -56,10 +57,5 @@ export async function swipe(
     select: { firstName: true },
   });
 
-  return {
-    matched: true,
-    matchId: match.id,
-    variant: match.variant as MatchVariant,
-    name: other?.firstName,
-  };
+  return { matched: true, matchId: match.id, name: other?.firstName };
 }

@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { MessageCircle, MapPin } from "lucide-react";
+import { MessageCircle, MapPin, Zap } from "lucide-react";
 import { verifySession } from "@/lib/dal";
 import { prisma } from "@/lib/prisma";
 
@@ -32,24 +32,28 @@ export default async function MatchesPage() {
     orderBy: { createdAt: "desc" },
   });
 
+  const now = Date.now();
   const rows = matches.map((m) => {
     const other = m.userAId === meId ? m.userB : m.userA;
-    const isMeetup = m.variant === "MEETUP";
+    const mu = m.meetups[0];
+    const confirmed = mu?.status === "CONFIRMED";
+    const challengeReady = m.challengeAt.getTime() <= now;
+
     let subtitle: string;
-    if (isMeetup) {
-      const mu = m.meetups[0];
-      if (!mu) subtitle = "Propose where and when to meet";
-      else if (mu.status === "CONFIRMED") subtitle = `Confirmed · ${mu.place}`;
-      else if (mu.status === "DECLINED") subtitle = "Proposal declined · try again";
-      else subtitle = `Pending · ${mu.place}`;
-    } else {
-      subtitle = m.messages[0]?.body ?? "New match · send a message";
-    }
+    if (confirmed) subtitle = `Meetup set · ${mu!.place}`;
+    else subtitle = m.messages[0]?.body ?? "New match · say hi";
+
+    const state: "confirmed" | "ready" | "chat" = confirmed
+      ? "confirmed"
+      : challengeReady
+        ? "ready"
+        : "chat";
+
     return {
       id: m.id,
       name: other.firstName,
       photo: other.photos[0]?.url ?? null,
-      isMeetup,
+      state,
       subtitle,
     };
   });
@@ -96,8 +100,10 @@ export default async function MatchesPage() {
                 <div className="min-w-0 flex-1">
                   <div className="flex items-center gap-1.5">
                     <span className="font-semibold">{r.name}</span>
-                    {r.isMeetup ? (
-                      <MapPin size={14} className="text-[var(--accent)]" />
+                    {r.state === "confirmed" ? (
+                      <MapPin size={14} className="text-[var(--success)]" />
+                    ) : r.state === "ready" ? (
+                      <Zap size={14} className="text-[var(--accent)]" fill="currentColor" />
                     ) : (
                       <MessageCircle size={14} className="text-[var(--primary)]" />
                     )}

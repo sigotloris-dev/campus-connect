@@ -5,7 +5,7 @@ import { verifySession } from "@/lib/dal";
 import { prisma } from "@/lib/prisma";
 import { getMessages } from "@/app/actions/chat";
 import { Chat } from "./chat";
-import { Meetup } from "./meetup";
+import { ChallengeBanner } from "@/components/challenge-banner";
 
 const otherSelect = {
   id: true,
@@ -27,7 +27,11 @@ export default async function MatchPage({
     include: {
       userA: { select: otherSelect },
       userB: { select: otherSelect },
-      meetups: { orderBy: { createdAt: "desc" } },
+      meetups: {
+        orderBy: { createdAt: "desc" },
+        take: 1,
+        select: { status: true },
+      },
     },
   });
   if (!match || (match.userAId !== meId && match.userBId !== meId)) notFound();
@@ -59,31 +63,15 @@ export default async function MatchPage({
           </div>
           <span className="truncate font-semibold">{other.firstName}</span>
         </Link>
-        <span className="ml-auto rounded-full bg-[var(--background)] px-2.5 py-1 text-xs font-medium text-[var(--muted)]">
-          {match.variant === "MEETUP" ? "Meetup" : "Chat"}
-        </span>
       </header>
 
-      {match.variant === "CHAT" ? (
-        <Chat matchId={id} meId={meId} initial={await getMessages(id)} />
-      ) : (
-        <Meetup
-          matchId={id}
-          meId={meId}
-          otherName={other.firstName}
-          latest={
-            match.meetups[0]
-              ? {
-                  id: match.meetups[0].id,
-                  proposerId: match.meetups[0].proposerId,
-                  place: match.meetups[0].place,
-                  time: match.meetups[0].time.toISOString(),
-                  status: match.meetups[0].status,
-                }
-              : null
-          }
-        />
-      )}
+      <ChallengeBanner
+        matchId={id}
+        challengeAt={match.challengeAt.toISOString()}
+        meetupStatus={match.meetups[0]?.status ?? null}
+      />
+
+      <Chat matchId={id} meId={meId} initial={await getMessages(id)} />
     </div>
   );
 }

@@ -10,5 +10,3 @@ export type Candidate = {
   bio: string | null;
   photos: string[];
 };
-
-export type MatchVariant = "MEETUP" | "CHAT";
