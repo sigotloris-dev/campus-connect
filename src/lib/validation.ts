@@ -20,7 +20,6 @@ export const RegisterSchema = z.object({
 });
 
 export const EditProfileSchema = z.object({
-  birthDate: z.string().min(1, "Enter your date of birth"),
   nationality: z.string().length(2, "Select your nationality"),
   englishLevel: z.enum(ENGLISH_LEVELS, { message: "Select your English level" }),
   dormId: z.string().min(1, "Select your dorm"),

@@ -9,14 +9,6 @@ import { EditProfileSchema, type FormState } from "@/lib/validation";
 import { isValidPhoto, savePhoto } from "@/lib/uploads";
 import { MAX_PHOTOS } from "@/lib/constants";
 
-function ageFrom(birth: Date): number {
-  const now = new Date();
-  let age = now.getFullYear() - birth.getFullYear();
-  const m = now.getMonth() - birth.getMonth();
-  if (m < 0 || (m === 0 && now.getDate() < birth.getDate())) age--;
-  return age;
-}
-
 export async function updateProfile(
   _prev: FormState,
   formData: FormData,
@@ -26,7 +18,6 @@ export async function updateProfile(
   const me = session.userId;
 
   const parsed = EditProfileSchema.safeParse({
-    birthDate: String(formData.get("birthDate") ?? ""),
     nationality: String(formData.get("nationality") ?? ""),
     englishLevel: String(formData.get("englishLevel") ?? ""),
     dormId: String(formData.get("dormId") ?? ""),
@@ -38,11 +29,6 @@ export async function updateProfile(
   const data = parsed.data;
 
   const fieldErrors: Record<string, string[]> = {};
-  const birth = new Date(data.birthDate);
-  const age = ageFrom(birth);
-  if (Number.isNaN(birth.getTime()) || age < 16 || age > 99) {
-    fieldErrors.birthDate = ["You must be at least 16"];
-  }
 
   // Foto: quelle da tenere + eventuali nuove (compresse lato client)
   const keep = formData.getAll("keepPhotos").map((v) => String(v));
@@ -106,7 +92,6 @@ export async function updateProfile(
     prisma.user.update({
       where: { id: me },
       data: {
-        birthDate: birth,
         nationality: data.nationality,
         englishLevel: data.englishLevel,
         dormId: data.dormId,

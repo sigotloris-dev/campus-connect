@@ -9,7 +9,6 @@ export default async function EditProfilePage() {
   const dorms = await prisma.dorm.findMany({ orderBy: { name: "asc" } });
 
   const initial = {
-    birthDate: user.birthDate.toISOString().slice(0, 10),
     nationality: user.nationality,
     englishLevel: user.englishLevel,
     dormId: user.dormId ?? "",

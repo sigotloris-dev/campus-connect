@@ -20,7 +20,6 @@ import {
 
 type Dorm = { id: string; name: string };
 type Initial = {
-  birthDate: string;
   nationality: string;
   englishLevel: string;
   dormId: string;
@@ -72,7 +71,6 @@ export function EditProfileForm({
   const fileRef = useRef<HTMLInputElement>(null);
 
   const [form, setForm] = useState({
-    birthDate: initial.birthDate,
     nationality: initial.nationality,
     englishLevel: initial.englishLevel,
     dormId: initial.dormId,
@@ -99,7 +97,6 @@ export function EditProfileForm({
   }, [previews]);
 
   const total = keptPhotos.length + newFiles.length;
-  const today = new Date().toISOString().slice(0, 10);
 
   function onAddFiles(e: React.ChangeEvent<HTMLInputElement>) {
     const list = e.target.files ? Array.from(e.target.files) : [];
@@ -115,12 +112,7 @@ export function EditProfileForm({
       setLocalError("Keep at least one photo");
       return;
     }
-    if (
-      !form.birthDate ||
-      !form.nationality ||
-      !form.englishLevel ||
-      !form.dormId
-    ) {
+    if (!form.nationality || !form.englishLevel || !form.dormId) {
       setLocalError("Fill in all fields");
       return;
     }
@@ -134,7 +126,6 @@ export function EditProfileForm({
     }
 
     const fd = new FormData();
-    fd.set("birthDate", form.birthDate);
     fd.set("nationality", form.nationality);
     fd.set("englishLevel", form.englishLevel);
     fd.set("dormId", form.dormId);
@@ -212,21 +203,6 @@ export function EditProfileForm({
         />
         {fe.photos && (
           <p className="mt-1 text-sm text-[var(--primary-600)]">{fe.photos[0]}</p>
-        )}
-      </div>
-
-      {/* Date of birth */}
-      <div>
-        <label className="mb-1 block text-sm font-medium">Date of birth</label>
-        <input
-          type="date"
-          max={today}
-          value={form.birthDate}
-          onChange={(e) => set("birthDate", e.target.value)}
-          className={inputClass}
-        />
-        {fe.birthDate && (
-          <p className="mt-1 text-sm text-[var(--primary-600)]">{fe.birthDate[0]}</p>
         )}
       </div>
 
