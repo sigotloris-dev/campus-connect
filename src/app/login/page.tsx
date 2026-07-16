@@ -29,6 +29,11 @@ export default async function LoginPage() {
           Sign up
         </Link>
       </p>
+      <p className="mt-3 text-center text-xs text-[var(--muted)]">
+        <Link href="/policies" className="underline">
+          Policies
+        </Link>
+      </p>
     </div>
   );
 }

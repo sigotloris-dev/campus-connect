@@ -69,6 +69,11 @@ export async function register(
     }
   }
 
+  // Accettazione delle policy (obbligatoria)
+  if (String(formData.get("acceptedPolicies") ?? "") !== "1") {
+    fieldErrors.acceptedPolicies = ["You must accept the policies"];
+  }
+
   if (Object.keys(fieldErrors).length > 0) {
     return { ok: false, fieldErrors };
   }
@@ -121,6 +126,7 @@ export async function register(
       dormId: data.dormId,
       departureDate: departure,
       bio: data.bio ? data.bio : null,
+      acceptedPoliciesAt: new Date(),
       photos: {
         create: photoUrls.map((url, i) => ({ url, order: i })),
       },

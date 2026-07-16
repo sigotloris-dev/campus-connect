@@ -25,6 +25,7 @@ model User {
   dormId        String?
   dorm          Dorm?    @relation(fields: [dormId], references: [id])
   bio           String?
+  acceptedPoliciesAt DateTime? // quando l'utente ha accettato le policy
   createdAt     DateTime @default(now())
 
   photos         Photo[]

@@ -61,6 +61,7 @@ export function RegisterForm({ dorms }: { dorms: Dorm[] }) {
   const [localError, setLocalError] = useState<string | null>(null);
   const [compressing, setCompressing] = useState(false);
   const [photos, setPhotos] = useState<File[]>([]);
+  const [agreed, setAgreed] = useState(false);
   const fileRef = useRef<HTMLInputElement>(null);
   const busy = pending || compressing;
 
@@ -181,6 +182,10 @@ export function RegisterForm({ dorms }: { dorms: Dorm[] }) {
       setLocalError("Add at least one photo");
       return;
     }
+    if (!agreed) {
+      setLocalError("Please accept the policies to continue");
+      return;
+    }
     setLocalError(null);
 
     setCompressing(true);
@@ -203,6 +208,7 @@ export function RegisterForm({ dorms }: { dorms: Dorm[] }) {
     fd.set("dormId", form.dormId);
     fd.set("departureDate", form.departureDate);
     fd.set("bio", form.bio);
+    fd.set("acceptedPolicies", "1");
     for (const f of compressed) fd.append("photos", f, f.name);
 
     startTransition(() => action(fd));
@@ -452,6 +458,33 @@ export function RegisterForm({ dorms }: { dorms: Dorm[] }) {
             <p className="mt-1 text-sm text-[var(--primary-600)]">{fe.photos[0]}</p>
           )}
         </div>
+
+        {/* Accettazione policy */}
+        <label className="flex items-start gap-3 text-sm">
+          <input
+            type="checkbox"
+            checked={agreed}
+            onChange={(e) => setAgreed(e.target.checked)}
+            className="mt-0.5 h-5 w-5 shrink-0 accent-[var(--primary)]"
+          />
+          <span className="text-[var(--muted)]">
+            I agree to StudyBuddy&apos;s{" "}
+            <a
+              href="/policies"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="font-semibold text-[var(--primary)] underline"
+            >
+              Terms, Privacy Policy and Community Guidelines
+            </a>
+            .
+          </span>
+        </label>
+        {fe.acceptedPolicies && (
+          <p className="text-sm text-[var(--primary-600)]">
+            {fe.acceptedPolicies[0]}
+          </p>
+        )}
       </section>
 
       {/* Errors */}
@@ -488,7 +521,7 @@ export function RegisterForm({ dorms }: { dorms: Dorm[] }) {
         ) : (
           <button
             type="submit"
-            disabled={busy || photos.length === 0}
+            disabled={busy || photos.length === 0 || !agreed}
             className="brand-gradient flex-1 rounded-xl py-3.5 font-semibold text-white shadow-md active:scale-[0.99] disabled:opacity-60"
           >
             {compressing
